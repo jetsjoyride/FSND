@@ -49,22 +49,23 @@ class Artist(db.Model):
     __tablename__ = 'artist'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String, nullable=False)
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
+    phone = db.Column(db.String(120),nullable=False)
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(1024))
+    seeking_venue = db.Column(db.Boolean())
+    seeking_description = db.Column(db.String(1024))
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    def __repr__(self):
+        return f"""<Artist {self.id} {self.name} {self.city} {self.state} _
+        {self.phone} {self.genres} {self.image_link} {self.facebook_link} _
+        {self.website} {self.seeking_venue} {self.seeking_description}>"""
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
-class Genre(db.Model):
-    __tablename__ = 'genre'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -519,43 +520,63 @@ if not app.debug:
 # Data Load Functions
 #----------------------------------------------------------------------------#
 def loadAllData():
-    loadGenres()
+    loadArtists()
 
-def loadGenres():
+def loadArtists():
     # data requiring loading goes Here
     error = False
-    genres = []
-    genres = [
-        Genre(name="Alternative"),
-        Genre(name="Blues"),
-        Genre(name="Classical"),
-        Genre(name="Country"),
-        Genre(name="Electronic"),
-        Genre(name="Folk"),
-        Genre(name="Funk"),
-        Genre(name="Hip-Hop"),
-        Genre(name="Heavy Metal"),
-        Genre(name="Instrumental"),
-        Genre(name="Jazz"),
-        Genre(name="Musical Theatre"),
-        Genre(name="Pop"),
-        Genre(name="Punk"),
-        Genre(name="R&B"),
-        Genre(name="Reggae"),
-        Genre(name="Rock n Roll"),
-        Genre(name="Soul"),
-        Genre(name="Other"),
+    artists = []
+    data1={
+    "id": 4,
+    "name": "Guns N Petals",
+    "genres": ["Rock n Roll"],
+    "city": "San Francisco",
+    "state": "CA",
+    "phone": "326-123-5000",
+    "website": "https://www.gunsnpetalsband.com",
+    "facebook_link": "https://www.facebook.com/GunsNPetals",
+    "seeking_venue": True,
+    "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+    "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
+    }
+
+    data2={
+    "id": 5,
+    "name": "Matt Quevedo",
+    "genres": ["Jazz"],
+    "city": "New York",
+    "state": "NY",
+    "phone": "300-400-5000",
+    "facebook_link": "https://www.facebook.com/mattquevedo923251523",
+    "seeking_venue": False,
+    "image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
+    }
+
+    data3={
+    "id": 6,
+    "name": "The Wild Sax Band",
+    "genres": ["Jazz", "Classical"],
+    "city": "San Francisco",
+    "state": "CA",
+    "phone": "432-325-5432",
+    "seeking_venue": False,
+    "image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80"
+    }
+
+    artists = [
+        Artist(**data1),
+        Artist(**data2),
+        Artist(**data3),
         ]
     try:
-        db.session.add_all(genres)
+        db.session.add_all(artists)
         db.session.commit()
-        print("genres loaded")
+        print("artists loaded")
     except:
         error = True
-        print("genre data loading error")
+        print("artists data loading error")
     finally:
         db.session.close()
-
 
 
 #----------------------------------------------------------------------------#
