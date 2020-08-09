@@ -253,16 +253,10 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
+  results = Artist.query.all()
+  data = []
+  for result in results:
+      data += [{'id':result.id,'name':result.name}]
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -271,7 +265,7 @@ def search_artists():
     # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
     # search for "band" should return "The Wild Sax Band".
     search_term = request.form.get('search_term','')
-    results = Artist.query.filter(Artist.name.ilike('%'+search_term.lower()+'%'))
+    results = Artist.query.filter(Artist.name.ilike('%'+search_term+'%'))
     data = []
     # Jason To Do: need query for num_upcoming_shows
     for result in results:
