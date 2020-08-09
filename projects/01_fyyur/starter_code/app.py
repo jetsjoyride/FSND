@@ -60,6 +60,11 @@ class Artist(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+class Genre(db.Model):
+    __tablename__ = 'genre'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -509,6 +514,49 @@ if not app.debug:
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler)
     app.logger.info('errors')
+
+#----------------------------------------------------------------------------#
+# Data Load Functions
+#----------------------------------------------------------------------------#
+def loadAllData():
+    loadGenres()
+
+def loadGenres():
+    # data requiring loading goes Here
+    error = False
+    genres = []
+    genres = [
+        Genre(name="Alternative"),
+        Genre(name="Blues"),
+        Genre(name="Classical"),
+        Genre(name="Country"),
+        Genre(name="Electronic"),
+        Genre(name="Folk"),
+        Genre(name="Funk"),
+        Genre(name="Hip-Hop"),
+        Genre(name="Heavy Metal"),
+        Genre(name="Instrumental"),
+        Genre(name="Jazz"),
+        Genre(name="Musical Theatre"),
+        Genre(name="Pop"),
+        Genre(name="Punk"),
+        Genre(name="R&B"),
+        Genre(name="Reggae"),
+        Genre(name="Rock n Roll"),
+        Genre(name="Soul"),
+        Genre(name="Other"),
+        ]
+    try:
+        db.session.add_all(genres)
+        db.session.commit()
+        print("genres loaded")
+    except:
+        error = True
+        print("genre data loading error")
+    finally:
+        db.session.close()
+
+
 
 #----------------------------------------------------------------------------#
 # Launch.

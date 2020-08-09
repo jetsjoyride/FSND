@@ -17,3 +17,4 @@ PGPASSWORD = 'postgres'
 connection = 'postgresql://' + PGUSER + ':' + PGPASSWORD + '@' + PGHOST + ':5432/' + PGDATABASE
 
 SQLALCHEMY_DATABASE_URI = connection
+SQLALCHEMY_TRACK_MODIFICATIONS = False
