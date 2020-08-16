@@ -8,8 +8,6 @@ DEBUG = True
 
 # Connect to the database
 
-
-# TODO IMPLEMENT DATABASE URL
 PGHOST = 'localhost'
 PGDATABASE = 'fyyur'
 PGUSER = 'postgres'
