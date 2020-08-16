@@ -13,6 +13,11 @@ from flask_migrate import Migrate
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from datetime import datetime
+# now = datetime.now()
+# Show.query.filter(Show.start_time>now).filter(Venue.id==3).count() =  Num of incoming shows
+# Show.query.filter(Venue.id==3).count() = Num of total shows at a venue
+
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -44,6 +49,7 @@ migrate = Migrate(app,db)
 # Models.
 #----------------------------------------------------------------------------#
 
+
 class Venue(db.Model):
     __tablename__ = 'venue'
 
@@ -59,11 +65,10 @@ class Venue(db.Model):
     seeking_talent = db.Column(db.Boolean())
     seeking_description = db.Column(db.String(1024))
     image_link = db.Column(db.String(500))
+    shows = db.relationship('Show', backref='venue', cascade='all, delete')
 
     def __repr__(self):
-        return f"""<Artist {self.id} {self.name} {self.address} {self.city} {self.state} _
-        {self.phone} {self.genres} {self.image_link} {self.facebook_link} _
-        {self.website} {self.seeking_talent} {self.seeking_description}>"""
+        return f"""<Venue {self.id} {self.name}>"""
 
 class Artist(db.Model):
     __tablename__ = 'artist'
@@ -79,13 +84,30 @@ class Artist(db.Model):
     website = db.Column(db.String(1024))
     seeking_venue = db.Column(db.Boolean())
     seeking_description = db.Column(db.String(1024))
+    shows = db.relationship('Show', backref='artist', cascade='all, delete')
 
     def __repr__(self):
-        return f"""<Artist {self.id} {self.name} {self.city} {self.state} _
-        {self.phone} {self.genres} {self.image_link} {self.facebook_link} _
-        {self.website} {self.seeking_venue} {self.seeking_description}>"""
+        return f"""<Artist {self.id} {self.name}>"""
+
+# Many-to-many relationships are defined before class definitions for a table
+class Show(db.Model):
+    __tablename__ = 'show'
+    id = db.Column(db.Integer, primary_key=True)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'),
+        nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'),
+        nullable=False)
+    start_time = db.Column(db.DateTime, nullable=False)
+    artists = db.relationship('Artist', backref='show',
+        cascade='all, delete', passive_deletes=True)
+    venues = db.relationship('Venue', backref='show',
+        cascade='all, delete', passive_deletes=True)
+
+    def __repr__(self):
+        return f"""<Show ID {self.id}: {self.artist.name} at {self.venue.name} on {self.start_time}>"""
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -475,6 +497,7 @@ if not app.debug:
 def loadAllData():
     loadArtists()
     loadVenues()
+    loadShows()
 
 def loadArtists():
     # data requiring loading goes Here
@@ -592,6 +615,53 @@ def loadVenues():
     except:
         error = True
         print("venues data loading error")
+    finally:
+        db.session.close()
+
+
+def loadShows():
+    # data requiring loading goes Here
+    error = False
+    shows = []
+    data1={
+        'artist_id': 4,
+        'venue_id': 1,
+        'start_time': '2019-05-21T21:30:00.000Z'
+    }
+    data2 = {
+        'artist_id': 5,
+        'venue_id': 3,
+        'start_time': '2019-06-15T23:00:00.000Z',
+    }
+    data3 = {
+        'artist_id': 6,
+        'venue_id': 3,
+        'start_time': '2035-04-01T20:00:00.000Z',
+    }
+    data4 = {
+        'artist_id': 6,
+        'venue_id': 3,
+        'start_time': '2035-04-08T20:00:00.000Z',
+    }
+    data5 = {
+        'artist_id': 6,
+        'venue_id': 3,
+        'start_time': '2035-04-15T20:00:00.000Z',
+    }
+    shows = [
+        Show(**data1),
+        Show(**data2),
+        Show(**data3),
+        Show(**data4),
+        Show(**data5),
+        ]
+    try:
+        db.session.add_all(shows)
+        db.session.commit()
+        print("shows loaded")
+    except:
+        error = True
+        print("shows data loading error")
     finally:
         db.session.close()
 
