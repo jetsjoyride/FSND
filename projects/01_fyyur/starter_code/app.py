@@ -110,35 +110,43 @@ def index():
   return render_template('pages/home.html')
 
 
-#  Venues
-#  ----------------------------------------------------------------
-
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
-  #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
-  return render_template('pages/venues.html', areas=data);
+# TODO: replace with real venues data.
+#       num_shows should be aggregated based on number of upcoming shows per venue.
+    data=[]
+    locations = Venue.query.with_entities(Venue.city, Venue.state).group_by(Venue.city, Venue.state).all()
+    for location in locations:
+        dataObj={}
+        dataObj['city'] = location.city
+        dataObj['state'] = location.state
+        dataObj['venues'] = [{'id':venue.id,'name':venue.name,'num_upcoming_shows':0} for venue in Venue.query.with_entities(Venue.id, Venue.name).filter_by(
+            city = location.city, state = location.state).all()]
+        data.append(dataObj)
+    # fix num of upcoming shows
+
+    # data=[{
+    #     "city": "San Francisco",
+    #     "state": "CA",
+    #     "venues": [{
+    #       "id": 1,
+    #       "name": "The Musical Hop",
+    #       "num_upcoming_shows": 0,
+    #     }, {
+    #       "id": 3,
+    #       "name": "Park Square Live Music & Coffee",
+    #       "num_upcoming_shows": 1,
+    #     }]
+    #     }, {
+    #     "city": "New York",
+    #     "state": "NY",
+    #     "venues": [{
+    #       "id": 2,
+    #       "name": "The Dueling Pianos Bar",
+    #       "num_upcoming_shows": 0,
+    #     }]
+    # }]
+    return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -210,7 +218,7 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  resuls = Artist.query.all()
+  results = Artist.query.all()
   data = []
   for result in results:
       data += [{'id':result.id,'name':result.name}]
@@ -237,6 +245,17 @@ def search_artists():
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
+
+  # >>> type(data1)
+  # <class 'dict'>
+  # >>> type(data1['genres'])
+  # <class 'list'>
+  # >>> type(data1['past_shows'])
+  # <class 'list'>
+  #
+  # type(data) = class'dict'
+
+
   data1={
     "id": 4,
     "name": "Guns N Petals",
@@ -309,6 +328,14 @@ def show_artist(artist_id):
     "upcoming_shows_count": 3,
   }
   data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
+
+
+  # venue = Venue.query.get(venue_id)
+  # # need to convert string genre to list genre
+  # venue.genres = venue.genres.strip('{}').split(',')
+
+
+
   return render_template('pages/show_artist.html', artist=data)
 
 #  Update
@@ -329,7 +356,7 @@ def edit_artist_submission(artist_id):
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
   form = VenueForm()
-  venue = Venue.query.get(artist_id)
+  venue = Venue.query.get(venue_id)
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
