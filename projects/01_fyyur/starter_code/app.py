@@ -15,10 +15,6 @@ from flask_wtf import FlaskForm
 from forms import *
 from datetime import datetime, timezone
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
-# now = datetime.now(timezone.utc)
-# date1 = parse(Show.query.first().start_time)
-# Show.query.filter(parse(Show.start_time)>now).filter(Venue.id==3).count() =  Num of upcoming shows
-# Show.query.filter(Venue.id==3).count() = Num of total shows at a venue
 
 #----------------------------------------------------------------------------#
 # App Config.
