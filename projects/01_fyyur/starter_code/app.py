@@ -288,15 +288,27 @@ def show_artist(artist_id):
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-  form = ArtistForm()
-  artist = Artist.query.get(artist_id)
-  return render_template('forms/edit_artist.html', form=form, artist=artist)
+    form = ArtistForm()
+    artist = Artist.query.get(artist_id)
+    form.name.default = artist.name
+    form.genre_list.default = artist.genre_list
+    form.city.default = artist.city
+    form.state.default = artist.state
+    form.phone.default = artist.phone
+    form.website.default = artist.website
+    form.facebook_link.default = artist.facebook_link
+    form.seeking_venue.default = artist.seeking_venue
+    form.seeking_description.default = artist.seeking_description
+    form.image_link.default = artist.image_link
+    form.process()
+    return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
     print(f'Form Artist {request.form["name"]}')
     # TODO: take values from the form submitted, and update existing
     # artist record with ID <artist_id> using the new attributes
+
     return redirect(url_for('show_artist', artist_id=artist_id))
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
