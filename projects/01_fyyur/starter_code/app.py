@@ -278,10 +278,34 @@ def edit_artist(artist_id):
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-    print(f'Form Artist {request.form["name"]}')
-    # TODO: take values from the form submitted, and update existing
-    # artist record with ID <artist_id> using the new attributes
-    return redirect(url_for('show_artist', artist_id=artist_id))
+    error = False
+    try:
+        Artist.query.filter(Artist.id==artist_id).update({
+            Artist.name:request.form.get('name'),
+            Artist.city:request.form.get('city'),
+            Artist.state:request.form.get('state'),
+            Artist.phone:request.form.get('phone'),
+            Artist.website:request.form.get('website'),
+            Artist.image_link:request.form.get('image_link'),
+            Artist.seeking_venue:request.form.get('seeking_venue'),
+            Artist.seeking_description:request.form.get('seeking_description'),
+            Artist.facebook_link:request.form.get('facebook_link'),
+            Artist.image_link:request.form.get('image_link'),
+            Artist.genres:request.form.getlist('genre_list')
+        })
+        db.session.commit()
+    except:
+        error = True
+        print("Artist not editted.")
+        db.session.rollback()
+    finally:
+        db.session.close()
+    if not error:
+        flash("Artist Updated")
+        return redirect(url_for('show_artist', artist_id=artist_id))
+    # abort(500)
+    flash("Error encountered")
+    return redirect(url_for('edit_artist', artist_id=artist_id))
 
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
