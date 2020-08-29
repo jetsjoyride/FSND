@@ -74,12 +74,6 @@ class Venue(db.Model):
         now = datetime.now()
         return Show.query.filter(Show.start_time>=now).filter(Show.venue_id==self.id).count()
 
-    # Redundant with property above - but named differently below . . .
-    @hybrid_property
-    def num_upcoming_shows(self):
-        now = datetime.now()
-        return Show.query.filter(Show.start_time>=now).filter(Show.venue_id==self.id).count()
-
     @hybrid_property
     def genre_list(self):
         return self.genres.strip('{\"}').replace('\"','').split(',')
@@ -120,12 +114,6 @@ class Artist(db.Model):
 
     @hybrid_property
     def upcoming_shows_count(self):
-        now = datetime.now()
-        return Show.query.filter(Show.start_time>=now).filter(Show.artist_id==self.id).count()
-
-    # Redundant with property above - but named differently below . . .
-    @hybrid_property
-    def num_upcoming_shows(self):
         now = datetime.now()
         return Show.query.filter(Show.start_time>=now).filter(Show.artist_id==self.id).count()
 
