@@ -268,6 +268,7 @@ def show_artist(artist_id):
   artist = Artist.query.get(artist_id)
   return render_template('pages/show_artist.html', artist=artist)
 
+#  ----------------------------------------------------------------
 #  Update
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
@@ -279,7 +280,6 @@ def edit_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
     error = False
-    print(f"{type(request.form.get('seeking_venue'))}")
     try:
         Artist.query.filter(Artist.id==artist_id).update({
             Artist.name:request.form.get('name'),
@@ -297,7 +297,6 @@ def edit_artist_submission(artist_id):
         db.session.commit()
     except:
         error = True
-        print("Artist not editted.")
         db.session.rollback()
     finally:
         db.session.close()
@@ -317,8 +316,6 @@ def edit_venue(venue_id):
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
-    # TODO: take values from the form submitted, and update existing
-    # venue record with ID <venue_id> using the new attributes
     error = False
     try:
         Venue.query.filter(Venue.id==venue_id).update({
@@ -338,7 +335,6 @@ def edit_venue_submission(venue_id):
         db.session.commit()
     except:
         error = True
-        print("Venue not editted.")
         db.session.rollback()
     finally:
         db.session.close()
@@ -361,16 +357,40 @@ def create_artist_form():
 
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
-  # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
-  # on successful db insert, flash success
-  flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
-  return render_template('pages/home.html')
+    error = False
+    try:
+        data = {
+            'name':request.form.get('name'),
+            'city':request.form.get('city'),
+            'state':request.form.get('state'),
+            'phone':request.form.get('phone'),
+            'website':request.form.get('website'),
+            'image_link':request.form.get('image_link'),
+            'seeking_venue':request.form.get('seeking_venue')=='y',
+            'seeking_description':request.form.get('seeking_description'),
+            'facebook_link':request.form.get('facebook_link'),
+            'image_link':request.form.get('image_link'),
+            'genres':request.form.getlist('genre_list')
+        }
+        new_artist = Artist(**data)
+        db.session.add(new_artist)
+        db.session.flush()
+        new_artist_id = new_artist.id
+        db.session.commit()
+    except:
+        error = True
+        db.session.rollback()
+    finally:
+        db.session.close()
+    if not error:
+        flash('Artist ' + request.form['name'] + ' was successfully listed!')
+        return redirect(url_for('show_artist', artist_id=new_artist_id))
+    # abort(500)
+    flash('An error occurred. Artist ' + data.name + ' could not be listed.')
+    return render_template('pages/home.html')
 
 
+#  ----------------------------------------------------------------
 #  Shows
 #  ----------------------------------------------------------------
 
