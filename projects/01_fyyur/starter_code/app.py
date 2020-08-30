@@ -175,8 +175,6 @@ def index():
 
 @app.route('/venues')
 def venues():
-# TODO: replace with real venues data.
-#       num_shows should be aggregated based on number of upcoming shows per venue.
     data=[]
     now = datetime.now()
     locations = Venue.query.with_entities(Venue.city, Venue.state).group_by(Venue.city, Venue.state).all()
@@ -440,8 +438,6 @@ def create_shows():
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
-    # called to create new shows in the db, upon submitting new show listing form
-    # TODO: insert form data as a new Show record in the db, instead
     error = False
     try:
         data = {
