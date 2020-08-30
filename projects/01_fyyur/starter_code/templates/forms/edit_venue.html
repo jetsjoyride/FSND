@@ -54,5 +54,11 @@
       </div>
       <input type="submit" value="Edit Venue" class="btn btn-primary btn-lg btn-block">
     </form>
+    <br>
+    <div class="form-wrapper">
+      <form class="form" method="post" action="/venues/{{venue.id}}/delete">
+        <input type="submit" value="Delete Venue" class="btn btn-primary btn-lg btn-block" STYLE="background-color:red">
+      </form>
+    </div>
   </div>
 {% endblock %}

@@ -6,6 +6,11 @@
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
+		<div class="form-wrapper">
+	    <form class="form" method="get" action="/venues/{{venue.id}}/edit">
+				<input type="submit" value="Edit Venue" class="btn btn-primary btn-lg btn-block">
+	  	</form>
+		</div>
 		<p class="subtitle">
 			ID: {{ venue.id }}
 		</p>
