@@ -279,6 +279,7 @@ def edit_artist(artist_id):
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
     error = False
+    print(f"{type(request.form.get('seeking_venue'))}")
     try:
         Artist.query.filter(Artist.id==artist_id).update({
             Artist.name:request.form.get('name'),
@@ -287,7 +288,7 @@ def edit_artist_submission(artist_id):
             Artist.phone:request.form.get('phone'),
             Artist.website:request.form.get('website'),
             Artist.image_link:request.form.get('image_link'),
-            Artist.seeking_venue:request.form.get('seeking_venue'),
+            Artist.seeking_venue:request.form.get('seeking_venue')=='y',
             Artist.seeking_description:request.form.get('seeking_description'),
             Artist.facebook_link:request.form.get('facebook_link'),
             Artist.image_link:request.form.get('image_link'),
@@ -328,7 +329,7 @@ def edit_venue_submission(venue_id):
             Venue.phone:request.form.get('phone'),
             Venue.website:request.form.get('website'),
             Venue.image_link:request.form.get('image_link'),
-            Venue.seeking_talent:request.form.get('seeking_talent'),
+            Venue.seeking_talent:request.form.get('seeking_talent')=='y',
             Venue.seeking_description:request.form.get('seeking_description'),
             Venue.facebook_link:request.form.get('facebook_link'),
             Venue.image_link:request.form.get('image_link'),
