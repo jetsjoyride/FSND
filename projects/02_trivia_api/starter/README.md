@@ -49,11 +49,11 @@ Pay special attention to what data the frontend is expecting from each API respo
 At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at the default, http://127.0.0.1:5000/, which is set as a proxy in the frontend.
 
 ### Error Handling
-Errors are returned as JSON objects in the following format:
-{
-"success": False,
-"error": 400,
-"message": "bad request"
+Errors are returned as JSON objects in the following format:\
+{\
+"success": False,\
+"error": 400,\
+"message": "bad request"\
 }
 
 The API will return three error types when requests fail:
@@ -64,18 +64,19 @@ The API will return three error types when requests fail:
 General: Returns a list of categories, success value
 Results are paginated in groups of 10.
 Include a request argument to choose page number, starting from 1.
+
 Sample Command: curl http://127.0.0.1:5000/categories
 
-Sample Response:
-{ "categories": [
-    {
-      "id": 1,
-      "type": "Science"
-    },
-    {
-      "id": 2,
-      "type": "Art"
-    },
-  ],
-  "success": true
+Sample Response:\
+{ "categories": [\
+    {\
+      "id": 1,\
+      "type": "Science"\
+    },\
+    {\
+      "id": 2,\
+      "type": "Art"\
+    },\
+  ],\
+  "success": true\
 }
