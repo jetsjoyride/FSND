@@ -18,12 +18,6 @@ def create_app(test_config=None):
     #  DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite')
     #  )
 
-    # app.config['SQLALCHEMY_DATABASE_URI'] = connection
-    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    # app.config['ENV'] = 'development'
-    # app.config['DEBUG'] = True
-    # app.config['TESTING'] = True
-
     if test_config is None:
         # load the instance config, if it exsits when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -31,7 +25,7 @@ def create_app(test_config=None):
     setup_db(app)
 
     '''
-    @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+    DONE!  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
     '''
     # Setup CORS
     # Basic way to Setup:
@@ -40,7 +34,7 @@ def create_app(test_config=None):
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     '''
-    @TODO: Use the after_request decorator to set Access-Control-Allow
+    DONE!  @TODO: Use the after_request decorator to set Access-Control-Allow
     '''
     @app.after_request
     def after_request(response):
@@ -52,8 +46,8 @@ def create_app(test_config=None):
     def pagination(request, data):
         # Set default to first page if not input
         page = request.args.get('page', 1, type=int)
-        start = (page - 1) * 10
-        end = start + 10
+        start = (page - 1) * QUESTIONS_PER_PAGE
+        end = start + QUESTIONS_PER_PAGE
         return data[start:end]
 
     '''
@@ -61,20 +55,21 @@ def create_app(test_config=None):
     Create an endpoint to handle GET requests
     for all available categories.
     '''
-
     @app.route('/categories')
     @cross_origin()  ## Enables CORS on this specific endpoint
     def load_categories():
-        categories = Category.query.all()
-        formatted_categories = [category.format() for category in categories]
-        paged_data = pagination(request, formatted_categories)
-        return jsonify({
-            'success': True,
-            'categories': paged_data
-            })
+        try:
+            categories = Category.query.all()
+            formatted_categories = [category.format() for category in categories]
+            paged_data = pagination(request, formatted_categories)
 
+            return jsonify({
+                'success': True,
+                'categories': paged_data
+                })
 
-
+        except:
+            abort(404)
 
     '''
     @TODO:
@@ -146,4 +141,20 @@ def create_app(test_config=None):
     Create error handlers for all expected errors
     including 404 and 422.
     '''
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify ({
+            "success": False,
+            "error": 404,
+            "message": "resource not found",
+            }), 404
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify ({
+            "success": False,
+            "error": 422,
+            "message": "unprocessable",
+            }), 422
+
     return app
