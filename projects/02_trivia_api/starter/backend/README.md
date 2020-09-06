@@ -71,35 +71,58 @@ One note before you delve into your tasks: for each endpoint you are expected to
 9. Create error handlers for all expected errors including 400, 404, 422 and 500.
 
 REVIEW_COMMENT
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code.
 
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
+## API Definitions
 
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs.
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+### Base URL
+At present this app can only be run locally and is not hosted as a base URL. The backend app is hosted at the default, http://127.0.0.1:5000/, which is set as a proxy in the frontend.
 
-```
+### Error Handling
+Errors are returned as JSON objects in the following format:
+> {\
+"success": False,\
+"error": 400,\
+"message": "bad request"\
+}
+
+The API will return three error types when requests fail:
+>    404: Resource Not Found\
+    422: Not Processable
+
+### GET ''/categories'
+
+General: Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+Request Arguments: Include a request argument to choose page number, starting from 1.
+Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. Results are paginated in groups of 10.
+
+Sample Command: curl http://127.0.0.1:5000/categories
+
+Sample Response:
+>{ "categories": [\
+{"id": 1,\
+"type": "Science"\
+},\
+{\
+"id": 2,\
+"type": "Art"\
+  },\
+],\
+"success": true\
+}
+
 
 
 ## Testing
-To run the tests, run
-```
-dropdb trivia_test
-createdb trivia_test
-psql trivia_test < trivia.psql
-** psql -d trivia_test -1 -f trivia.psql from backend directory
-python test_flaskr.py
+To run the tests, run python test_flaskr.py
+
+Pre-requisites:
+It expects to have trivia_test database setup.
+
+Recommended setup:
+>  dropdb trivia_test\
+  createdb trivia_test\
+  psql trivia_test < trivia.psql\
+  ** Alternative command:
+  psql -d trivia_test -1 -f trivia.psql from /backend directory
+
 ```
