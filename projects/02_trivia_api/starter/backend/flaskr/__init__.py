@@ -47,7 +47,7 @@ def create_app(test_config=None):
     Create an endpoint to handle GET requests
     for all available categories.
     '''
-    @app.route('/categories')
+    @app.route('/categories', methods=['GET'])
     @cross_origin()  ## Enables CORS on this specific endpoint
     def get_categories():
         try:
@@ -76,7 +76,7 @@ def create_app(test_config=None):
     Clicking on the page numbers should update the questions.
     '''
 
-    @app.route('/questions')
+    @app.route('/questions', methods=['GET'])
     @cross_origin()  ## Enables CORS on this specific endpoint
     def get_questions():
         try:
@@ -84,15 +84,16 @@ def create_app(test_config=None):
             formatted_questions = [question.format() for question in questions]
             paged_data = pagination(request, formatted_questions)
 
-            categories = Category.query.all()
-            formatted_categories = [category.format() for category in categories]
+            categories = {}
+            for category in Category.query.all():
+                categories[category.id] = category.type
 
             return jsonify({
                 'success': True,
-                'totalQuestions': len(questions),
+                'total_questions': len(questions),
                 'questions': paged_data,
-                'categories': formatted_categories,
-                'currentCategory': Category.query.first().type
+                'categories': categories,
+                'current_category': None # Category.query.first().type
                 })
 
         except:

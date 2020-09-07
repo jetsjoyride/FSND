@@ -43,13 +43,12 @@ class Question(db.Model):
     id = db.Column(Integer, primary_key=True)
     question = db.Column(String)
     answer = db.Column(String)
-    category = db.Column(Integer)
-    # category = db.Column(Integer, db.ForeignKey('categories.id'), nullable=False)
+    category_id = db.Column(Integer, db.ForeignKey('categories.id'))
     difficulty = db.Column(Integer)
 
-    # @hybrid_property
-    # def category(self):
-    #     return self.cat.type
+    @hybrid_property
+    def category(self):
+        return self.categories.id
 
     def __init__(self, question, answer, category, difficulty):
         self.question = question
@@ -86,7 +85,7 @@ class Category(db.Model):
 
     id = db.Column(Integer, primary_key=True)
     type = db.Column(String)
-    # questions = db.relationship('Question', backref='cat', cascade='all, delete')
+    questions = db.relationship('Question', backref='categories', cascade='all, delete')
 
     def __init__(self, type):
         self.type = type
