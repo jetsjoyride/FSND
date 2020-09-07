@@ -3,7 +3,7 @@ from flask import Flask
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
-
+from flask_migrate import Migrate
 
 PGHOST = 'localhost'
 PGDATABASE = 'trivia'
@@ -18,6 +18,7 @@ database_path = 'postgresql://' + PGUSER + ':' + PGPASSWORD + '@' + PGHOST + ':5
 # db = SQLAlchemy(app)
 
 db = SQLAlchemy()
+migrate = Migrate()
 
 '''
 setup_db(app)
@@ -28,7 +29,8 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
+    # db.create_all()
+    migrate.init_app(app, db)
 
 '''
 Question
