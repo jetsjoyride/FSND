@@ -40,15 +40,16 @@ Question
 class Question(db.Model):
     __tablename__ = 'questions'
 
-    id = Column(Integer, primary_key=True)
-    question = Column(String)
-    answer = Column(String)
-    category = Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
-    difficulty = Column(Integer)
+    id = db.Column(Integer, primary_key=True)
+    question = db.Column(String)
+    answer = db.Column(String)
+    category = db.Column(Integer)
+    # category = db.Column(Integer, db.ForeignKey('categories.id'), nullable=False)
+    difficulty = db.Column(Integer)
 
-    @hybrid_property
-    def category(self):
-        return self.cat.type
+    # @hybrid_property
+    # def category(self):
+    #     return self.cat.type
 
     def __init__(self, question, answer, category, difficulty):
         self.question = question
@@ -83,9 +84,9 @@ Category
 class Category(db.Model):
     __tablename__ = 'categories'
 
-    id = Column(Integer, primary_key=True)
-    type = Column(String)
-    questions = db.relationship('Question', backref='cat', cascade='all, delete')
+    id = db.Column(Integer, primary_key=True)
+    type = db.Column(String)
+    # questions = db.relationship('Question', backref='cat', cascade='all, delete')
 
     def __init__(self, type):
         self.type = type
