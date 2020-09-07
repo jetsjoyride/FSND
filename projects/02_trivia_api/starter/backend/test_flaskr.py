@@ -47,7 +47,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['categories'])
         self.assertTrue(len(data['categories']))
 
-    def test_404_sent_requesting_beyond_valid_page(self):
+    def test_get_categories_beyond_valid_page(self):
         res = self.client().get('/categories?page=1000')
         data = json.loads(res.data)
 
@@ -55,6 +55,24 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(data['categories'],[])
         self.assertEqual(len(data['categories']), 0)
+
+    def test_get_questions(self):
+        res = self.client().get('/questions')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['questions'])
+        self.assertTrue(len(data['questions']))
+
+    def test_get_questions_beyond_valid_page(self):
+        res = self.client().get('/questions?page=1000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['questions'],[])
+        self.assertEqual(len(data['questions']), 0)
 
 
 # Make the tests conveniently executable
