@@ -3,7 +3,8 @@ from flask import Flask
 from sqlalchemy import Column, String, Integer, create_engine
 from flask_sqlalchemy import SQLAlchemy
 import json
-
+from flask_migrate import Migrate
+from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
 
 PGHOST = 'localhost'
 PGDATABASE = 'trivia'
@@ -18,6 +19,7 @@ database_path = 'postgresql://' + PGUSER + ':' + PGPASSWORD + '@' + PGHOST + ':5
 # db = SQLAlchemy(app)
 
 db = SQLAlchemy()
+migrate = Migrate(compare_type=True)
 
 '''
 setup_db(app)
@@ -28,62 +30,68 @@ def setup_db(app, database_path=database_path):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
-    db.create_all()
+    # db.create_all()
+    migrate.init_app(app, db)
 
 '''
 Question
 
 '''
 class Question(db.Model):
-  __tablename__ = 'questions'
+    __tablename__ = 'questions'
 
-  id = Column(Integer, primary_key=True)
-  question = Column(String)
-  answer = Column(String)
-  category = Column(String)
-  difficulty = Column(Integer)
+    id = Column(Integer, primary_key=True)
+    question = Column(String)
+    answer = Column(String)
+    category = Column(db.Integer, db.ForeignKey('categories.id'), nullable=False)
+    difficulty = Column(Integer)
 
-  def __init__(self, question, answer, category, difficulty):
-    self.question = question
-    self.answer = answer
-    self.category = category
-    self.difficulty = difficulty
+    @hybrid_property
+    def category(self):
+        return self.cat.type
 
-  def insert(self):
-    db.session.add(self)
-    db.session.commit()
+    def __init__(self, question, answer, category, difficulty):
+        self.question = question
+        self.answer = answer
+        self.category = category
+        self.difficulty = difficulty
 
-  def update(self):
-    db.session.commit()
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
 
-  def delete(self):
-    db.session.delete(self)
-    db.session.commit()
+    def update(self):
+        db.session.commit()
 
-  def format(self):
-    return {
-      'id': self.id,
-      'question': self.question,
-      'answer': self.answer,
-      'category': self.category,
-      'difficulty': self.difficulty
-    }
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+    def format(self):
+        return {
+          'id': self.id,
+          'question': self.question,
+          'answer': self.answer,
+          'category': self.category,
+          'difficulty': self.difficulty
+        }
 
 '''
 Category
 
 '''
 class Category(db.Model):
-  __tablename__ = 'categories'
+    __tablename__ = 'categories'
 
-  id = Column(Integer, primary_key=True)
-  type = Column(String)
+    id = Column(Integer, primary_key=True)
+    type = Column(String)
+    questions = db.relationship('Question', backref='cat', cascade='all, delete')
 
-  def __init__(self, type):
-    self.type = type
+    def __init__(self, type):
+        self.type = type
 
-  def format(self):
-    return {
-      'id': self.id,
-      'type': self.type
-    }
+    def format(self):
+        return {
+          'id': self.id,
+          'type': self.type
+        }
