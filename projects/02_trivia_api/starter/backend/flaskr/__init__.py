@@ -154,6 +154,38 @@ def create_app(test_config=None):
     category to be shown.
     '''
 
+    @app.route('/categories/<int:category_id>/questions', methods=['GET'])
+    @cross_origin()  ## Enables CORS on this specific endpoint
+    def get_questions_in_a_category(category_id):
+        try:
+            status = 200
+            questions = Question.query.filter(Question.category_id==category_id).all()
+            formatted_questions = [question.format() for question in questions]
+            paged_data = pagination(request, formatted_questions)
+
+            if len(paged_data) == 0:
+                status = 404
+
+            categories = {}
+            for category in Category.query.all():
+                categories[category.id] = category.type
+
+        except:
+            abort(422)
+
+        if status == 404:
+            abort(404)
+        else:
+            return jsonify({
+                'status_code': 200,
+                'success': True,
+                'total_questions': len(questions),
+                'questions': paged_data,
+                'categories': categories,
+                'current_category': Category.query.get(category_id).type
+                })
+
+
 
     '''
     @TODO:

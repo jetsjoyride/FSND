@@ -110,51 +110,63 @@ Sample Response:
 "success": true\
 }
 
-### GET '/questions'
+### GET '/categories/\<category_id\>/questions'
 
-General: Fetches a dictionary of questions in which the keys are the ids and it contains information about the question, it's difficulty and category as well as a tuple of category id and type.\
-Request Arguments: Include a request argument to choose page number, starting from 1.\
+General: Fetches a dictionary of questions for a specific category.
+Request Arguments: Valid category ID. Include a request argument to choose page number, starting from 1.\
 Returns: Results are paginated in groups of 10.\
 
-Sample Command: curl http://127.0.0.1:5000/questions
+Sample Command: curl http://127.0.0.1:5000/categories/4/questions
 
-Sample Response:
->  { "categories": [\
-    "1": "Science",\
-    "2": "Art",\
-    "3": "Geography",\
-    "4": "History",\
-    "5": "Entertainment",\
-    "6": "Sports"\
-  },\
-  "current_category": null,\
-  "questions": [\
-    {\
-      "answer": "Agra",\
-      "category": 3,\
-      "difficulty": 2,\
-      "id": 15,\
-      "question": "The Taj Mahal is located in which Indian city?"\
+Sample Response: same as GET '/questions' below
+
+  ### GET '/questions'
+
+  General: Fetches a dictionary of questions in which the keys are the ids and it contains information about the question, it's difficulty and category as well as a tuple of category id and type.\
+  Request Arguments: Include a request argument to choose page number, starting from 1.\
+  Returns: Results are paginated in groups of 10.\
+
+  Sample Command: curl http://127.0.0.1:5000/questions
+
+  Sample Response:
+  >  { "categories": [\
+      "1": "Science",\
+      "2": "Art",\
+      "3": "Geography",\
+      "4": "History",\
+      "5": "Entertainment",\
+      "6": "Sports"\
     },\
-  {\
-    "answer": "Blood",\
-    "category": 1,\
-    "difficulty": 4,\
-    "id": 22,\
-    "question": "Hematology is a branch of medicine involving the study of\ what?"\
-  },\
-  {\
-    "answer": "Scarab",\
-    "category": 4,\
-    "difficulty": 4,\
-    "id": 23,\
-    "question": "Which dung beetle was worshipped by the ancient Egyptians?"\
-  }\
-  ],\
-  "status_code": 200,\
-  "success": true,\
-  "total_questions": 19\
-  }
+    "current_category": null,\
+    "questions": [\
+      {\
+        "answer": "Agra",\
+        "category": 3,\
+        "difficulty": 2,\
+        "id": 15,\
+        "question": "The Taj Mahal is located in which Indian city?"\
+      },\
+    {\
+      "answer": "Blood",\
+      "category": 1,\
+      "difficulty": 4,\
+      "id": 22,\
+      "question": "Hematology is a branch of medicine involving the study of\ what?"\
+    },\
+    {\
+      "answer": "Scarab",\
+      "category": 4,\
+      "difficulty": 4,\
+      "id": 23,\
+      "question": "Which dung beetle was worshipped by the ancient Egyptians?"\
+    }\
+    ],\
+    "status_code": 200,\
+    "success": true,\
+    "total_questions": 19\
+    }
+
+
 
 ## Testing
 To run the tests, run python test_flaskr.py
