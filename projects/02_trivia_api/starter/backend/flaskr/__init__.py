@@ -51,17 +51,25 @@ def create_app(test_config=None):
     @cross_origin()  ## Enables CORS on this specific endpoint
     def get_categories():
         try:
+            status = 200
             categories = Category.query.all()
             formatted_categories = [category.format() for category in categories]
             paged_data = pagination(request, formatted_categories)
 
+            if len(paged_data) == 0:
+                status = 404
+        except:
+            abort(422)
+
+        if status == 404:
+            abort(404)
+        else:
             return jsonify({
+                'status_code': status,
                 'success': True,
                 'categories': paged_data
                 })
 
-        except:
-            abort(404)
 
     '''
     @TODO:
@@ -80,25 +88,32 @@ def create_app(test_config=None):
     @cross_origin()  ## Enables CORS on this specific endpoint
     def get_questions():
         try:
+            status = 200
             questions = Question.query.all()
             formatted_questions = [question.format() for question in questions]
             paged_data = pagination(request, formatted_questions)
+
+            if len(paged_data) == 0:
+                status = 404
 
             categories = {}
             for category in Category.query.all():
                 categories[category.id] = category.type
 
+        except:
+            abort(422)
+
+        if status == 404:
+            abort(404)
+        else:
             return jsonify({
+                'status_code': 200,
                 'success': True,
                 'total_questions': len(questions),
                 'questions': paged_data,
                 'categories': categories,
                 'current_category': None # Category.query.first().type
                 })
-
-        except:
-            abort(404)
-
 
     '''
     @TODO:

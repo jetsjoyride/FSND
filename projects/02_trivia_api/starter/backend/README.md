@@ -89,7 +89,7 @@ The API will return three error types when requests fail:
 >    404: Resource Not Found\
     422: Not Processable
 
-### GET ''/categories'
+### GET '/categories'
 
 General: Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 Request Arguments: Include a request argument to choose page number, starting from 1.
@@ -110,19 +110,60 @@ Sample Response:
 "success": true\
 }
 
+### GET '/questions'
 
+General: Fetches a dictionary of questions in which the keys are the ids and it contains information about the question, it's difficulty and category as well as a tuple of category id and type.\
+Request Arguments: Include a request argument to choose page number, starting from 1.\
+Returns: Results are paginated in groups of 10.\
+
+Sample Command: curl http://127.0.0.1:5000/questions
+
+Sample Response:
+>  { "categories": [\
+    "1": "Science",\
+    "2": "Art",\
+    "3": "Geography",\
+    "4": "History",\
+    "5": "Entertainment",\
+    "6": "Sports"\
+  },\
+  "current_category": null,\
+  "questions": [\
+    {\
+      "answer": "Agra",\
+      "category": 3,\
+      "difficulty": 2,\
+      "id": 15,\
+      "question": "The Taj Mahal is located in which Indian city?"\
+    },\
+  {\
+    "answer": "Blood",\
+    "category": 1,\
+    "difficulty": 4,\
+    "id": 22,\
+    "question": "Hematology is a branch of medicine involving the study of\ what?"\
+  },\
+  {\
+    "answer": "Scarab",\
+    "category": 4,\
+    "difficulty": 4,\
+    "id": 23,\
+    "question": "Which dung beetle was worshipped by the ancient Egyptians?"\
+  }\
+  ],\
+  "status_code": 200,\
+  "success": true,\
+  "total_questions": 19\
+  }
 
 ## Testing
 To run the tests, run python test_flaskr.py
 
 Pre-requisites:
-It expects to have trivia_test database setup.
+It expects to have trivia_test database setup. This should be a copy of the trivia database (be sure to use flask db upgrade to get to the correct database version.)
 
-Recommended setup:
->  dropdb trivia_test\
-  createdb trivia_test\
-  psql trivia_test < trivia.psql\
-  ** Alternative command:
-  psql -d trivia_test -1 -f trivia.psql from /backend directory
+Recommended setup from PSQL:
+> dropdb trivia_test;\
+  createdb trivia_test with template trivia;\
 
 ```
