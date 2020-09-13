@@ -171,7 +171,7 @@ General: Add a new question to the database
 Request Arguments: you need to pass in the following: question, answer, category_id (as name: 'category'), difficulty
 Returns: Confirmation response with created ID if successful
 
-Sample Command: curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d "{\"question\": \"test question\", \"answer\":\"test answer\", \"category\":\"1\", \"difficulty\":\"4\"}"
+Sample Command: curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"question": "test question", "answer":"test answer", "category":"1", "difficulty":"4"}'
 
 Sample response:
 >({ 'status_code': 200,\
@@ -184,7 +184,7 @@ General: Search questions based on a search term
 Request Arguments: you need to pass in the following: searchTerm
 Returns: Confirmation response with questions
 
-Sample Command: curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d "{\"searchTerm\":\"what\"}"
+Sample Command: curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d '{"searchTerm":"what"}'
 
 Sample response:
 >see get questions above . . . but will return only questions which match search term
@@ -203,7 +203,27 @@ Sample Response:
    'deleted': 23,\
 })
 
+### POST '/quizzes'  -- Play a Game
 
+General: Play the trivia game
+Request Arguments (optional): previous_questions (if there are questions already played that you want eliminated) AND quiz_category if you want to limit questions to a specific category id
+Returns: a randomly selected question if one remains
+
+Sample command: curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions":[16,17], "quiz_category":"2"}'\
+curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d "{}"
+
+Sample Response:
+>  { "questions": [\
+    {\
+      "answer": "Agra",\
+      "category": 3,\
+      "difficulty": 2,\
+      "id": 15,\
+      "question": "The Taj Mahal is located in which Indian city?"\
+    },\
+  "status_code": 200,\
+  "success": true,\
+  }
 
 ## Testing
 To run the tests, run python test_flaskr.py

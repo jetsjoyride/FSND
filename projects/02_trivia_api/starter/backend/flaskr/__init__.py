@@ -274,7 +274,7 @@ def create_app(test_config=None):
 
 
     '''
-    @TODO:
+    DONE!  @TODO:
     Create a POST endpoint to get questions to play the quiz.
     This endpoint should take category and previous question parameters
     and return a random questions within the given category,
@@ -285,8 +285,53 @@ def create_app(test_config=None):
     and shown whether they were correct or not.
     '''
 
+
+    @app.route('/quizzes', methods=['POST'])
+    @cross_origin()  ## Enables CORS on this specific endpoint
+    def play_trivia():
+        status = 200
+        body = request.get_json()
+
+        previous_questions = body.get('previous_questions', None)
+        quiz_category = body.get('quiz_category', None)
+
+        try:
+            # get questions associated to category
+            if quiz_category:
+                questions = Question.query.filter(Question.category_id==quiz_category).all()
+            else:
+                questions = Question.query.all()
+
+            # make an array of valid questions to randomly choose from
+            possible_questions = []
+            if previous_questions:
+                for question in questions:
+                    if question.id not in previous_questions:
+                        possible_questions.append(question.id)
+            # run more efficiently in no previous questions
+            else:
+                for question in questions:
+                    possible_questions.append(question.id)
+
+            # abort if there are no more valid questions to return (meaning that all questions have been played)
+            if len(possible_questions) == 0:
+                abort(422)
+
+            # select a random possible question and format for json use
+            question = Question.query.filter(Question.id==random.choice(possible_questions)).first().format()
+
+            return jsonify({
+                'status_code': 200,
+                'success': True,
+                'question': question,
+                })
+
+        except:
+            # if category ID is blank - abort with 422 - unprocessable
+            abort(422)
+
     '''
-    @TODO:
+    DONE!   @TODO:
     Create error handlers for all expected errors
     including 404 and 422.
     '''
