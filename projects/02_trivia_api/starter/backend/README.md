@@ -166,7 +166,7 @@ Sample Response: same as GET '/questions' below
     "total_questions": 19\
     }
 
-### POST '/questions'
+### POST '/questions' -- Add a question
 General: Add a new question to the database
 Request Arguments: you need to pass in the following: question, answer, category_id (as name: 'category'), difficulty
 Returns: Confirmation response with created ID if successful
@@ -178,6 +178,16 @@ Sample response:
    'success': True,\
    'created': 24,\
 })
+
+### POST '/questions' -- Search for a question
+General: Search questions based on a search term
+Request Arguments: you need to pass in the following: searchTerm
+Returns: Confirmation response with questions
+
+Sample Command: curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d "{\"searchTerm\":\"what\"}"
+
+Sample response:
+>see get questions above . . . but will return only questions which match search term
 
 ### DELETE '/questions/\<question_id\>'
 
@@ -192,6 +202,7 @@ Sample Response:
    'success': True,\
    'deleted': 23,\
 })
+
 
 
 ## Testing

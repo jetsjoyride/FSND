@@ -43,7 +43,7 @@ def create_app(test_config=None):
         return data[start:end]
 
     '''
-    @TODO:
+    DONE!  @TODO:
     Create an endpoint to handle GET requests
     for all available categories.
     '''
@@ -75,7 +75,7 @@ def create_app(test_config=None):
 
 
     '''
-    @TODO:
+    DONE!  @TODO:
     Create an endpoint to handle GET requests for questions,
     including pagination (every 10 questions).
     This endpoint should return a list of questions,
@@ -119,7 +119,7 @@ def create_app(test_config=None):
                 })
 
     '''
-    @TODO:
+    DONE!  @TODO:
     Create an endpoint to DELETE question using a question ID.
 
     TEST: When you click the trash icon next to a question, the question will be removed.
@@ -146,7 +146,7 @@ def create_app(test_config=None):
 
 
     '''
-    @TODO:
+    DONE!  @TODO:
     Create an endpoint to POST a new question,
     which will require the question and answer text,
     category, and difficulty score.
@@ -156,42 +156,8 @@ def create_app(test_config=None):
     of the questions list in the "List" tab.
     '''
 
-    @app.route('/questions', methods=['POST'])
-    @cross_origin()  ## Enables CORS on this specific endpoint
-    def add_a_question():
-        try:
-            status = 200
-            body = request.get_json()
-
-            new_question = body.get('question', None)
-            new_answer = body.get('answer', None)
-            new_difficulty = int(body.get('difficulty', None))
-            new_category = body.get('category', None)
-
-            # Verify all the input is provided
-            if new_question is None:
-                abort(422)
-            if new_answer is None:
-                abort(422)
-            if new_difficulty is None:
-                abort(422)
-            if new_category is None:
-                abort(422)
-
-            question = Question(question=new_question, answer=new_answer, difficulty=new_difficulty, category_id=new_category)
-            question.insert()
-
-            return jsonify({
-                'status_code': 200,
-                'success': True,
-                'created': question.id,
-                })
-
-        except:
-            abort(422)
-
     '''
-    @TODO:
+    DONE!  @TODO:
     Create a POST endpoint to get questions based on a search term.
     It should return any questions for whom the search term
     is a substring of the question.
@@ -201,8 +167,72 @@ def create_app(test_config=None):
     Try using the word "title" to start.
     '''
 
+    @app.route('/questions', methods=['POST'])
+    @cross_origin()  ## Enables CORS on this specific endpoint
+    def add_a_question():
+        status = 200
+        body = request.get_json()
+
+        new_question = body.get('question', None)
+        new_answer = body.get('answer', None)
+        new_difficulty = body.get('difficulty', None)
+        new_category = body.get('category', None)
+        search = body.get('searchTerm', None)
+
+        try:
+            if search:
+                selection = Question.query.order_by(Question.id).filter(Question.question.ilike('%{}%'.format(search)))
+
+                formatted_questions = [question.format() for question in selection]
+
+                # throw error is no questions based on search term - that way GUI has positive empty response
+                if len(formatted_questions) == 0:
+                    status = 404
+
+                categories = {}
+                for category in Category.query.all():
+                    categories[category.id] = category.type
+
+            else:
+                # Verify all the input is provided
+                if new_question is None:
+                    abort(422)
+                if new_answer is None:
+                    abort(422)
+                if new_difficulty is None:
+                    abort(422)
+                if new_category is None:
+                    abort(422)
+
+                question = Question(question=new_question, answer=new_answer, difficulty=int(new_difficulty), category_id=new_category)
+                question.insert()
+
+                return jsonify({
+                    'status_code': 200,
+                    'success': True,
+                    'created': question.id,
+                    })
+
+        except:
+            abort(422)
+
+        if search:
+            if status == 200:
+                return jsonify({
+                    'status_code': 200,
+                    'success': True,
+                    'total_questions': len(formatted_questions),
+                    'questions': formatted_questions,
+                    'categories': categories, # does not seem used . . . by QuestionView.js line 94
+                    'current_category': None # Category.query.first().type
+                    })
+            else:
+                # return not found
+                abort(404)
+
+
     '''
-    @TODO:
+    DONE!  @TODO:
     Create a GET endpoint to get questions based on category.
 
     TEST: In the "List" tab / main screen, clicking on one of the
