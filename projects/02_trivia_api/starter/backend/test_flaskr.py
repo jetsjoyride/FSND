@@ -94,16 +94,30 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'],'resource not found')
 
-    def test_delete_a_question(self):
-        res = self.client().delete('questions/23')
+    def test_add_a_question(self):
+        res = self.client().post('questions', json={'question': 'test question', 'answer': 'test answer', 'difficulty': '4', 'category': 1})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
-        self.assertTrue(data['questions'])
-        self.assertTrue(data['total_questions'])
-        self.assertTrue(data['categories'])
-        self.assertTrue(data['current_category'])
+        self.assertTrue(data['created'])
+
+    def test_add_a_question_missing_data(self):
+        res = self.client().post('questions', json={'answer': 'test answer', 'difficulty': '4', 'category': 1})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'],'unprocessable')
+
+    def test_delete_a_question(self):
+        id_to_delete = str(Question.query.filter(Question.question=='test question').first().id)
+        res = self.client().delete('questions/'+id_to_delete)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['deleted'])
 
     def test_delete_an_invalid_question(self):
         res = self.client().delete('questions/1000')
@@ -111,9 +125,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
-        self.assertEqual(data['message'],'resource not found')
-
-
+        self.assertEqual(data['message'],'unprocessable')
 
 # Make the tests conveniently executable
 if __name__ == "__main__":

@@ -50,10 +50,10 @@ class Question(db.Model):
     def category(self):
         return self.categories.id
 
-    def __init__(self, question, answer, category, difficulty):
+    def __init__(self, question, answer, category_id, difficulty):
         self.question = question
         self.answer = answer
-        self.category = category
+        self.category_id = category_id
         self.difficulty = difficulty
 
     def insert(self):

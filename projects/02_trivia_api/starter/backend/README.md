@@ -166,6 +166,19 @@ Sample Response: same as GET '/questions' below
     "total_questions": 19\
     }
 
+### POST '/questions'
+General: Add a new question to the database
+Request Arguments: you need to pass in the following: question, answer, category_id (as name: 'category'), difficulty
+Returns: Confirmation response with created ID if successful
+
+Sample Command: curl http://127.0.0.1:5000/questions -X POST -H "Content-Type: application/json" -d "{\"question\": \"test question\", \"answer\":\"test answer\", \"category\":\"1\", \"difficulty\":\"4\"}"
+
+Sample response:
+>({ 'status_code': 200,\
+   'success': True,\
+   'created': 24,\
+})
+
 ### DELETE '/questions/\<question_id\>'
 
 General: Delete a specific question\

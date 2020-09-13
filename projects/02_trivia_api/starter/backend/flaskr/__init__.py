@@ -52,11 +52,14 @@ def create_app(test_config=None):
     def get_categories():
         try:
             status = 200
-            categories = Category.query.all()
-            formatted_categories = [category.format() for category in categories]
-            paged_data = pagination(request, formatted_categories)
+            # categories = Category.query.all()
+            # formatted_categories = [category.format() for category in categories]
 
-            if len(paged_data) == 0:
+            categories = {}
+            for category in Category.query.all():
+                categories[category.id] = category.type
+
+            if len(categories) == 0:
                 status = 404
         except:
             abort(422)
@@ -67,7 +70,7 @@ def create_app(test_config=None):
             return jsonify({
                 'status_code': status,
                 'success': True,
-                'categories': paged_data
+                'categories': categories
                 })
 
 
@@ -152,6 +155,40 @@ def create_app(test_config=None):
     the form will clear and the question will appear at the end of the last page
     of the questions list in the "List" tab.
     '''
+
+    @app.route('/questions', methods=['POST'])
+    @cross_origin()  ## Enables CORS on this specific endpoint
+    def add_a_question():
+        try:
+            status = 200
+            body = request.get_json()
+
+            new_question = body.get('question', None)
+            new_answer = body.get('answer', None)
+            new_difficulty = int(body.get('difficulty', None))
+            new_category = body.get('category', None)
+
+            # Verify all the input is provided
+            if new_question is None:
+                abort(422)
+            if new_answer is None:
+                abort(422)
+            if new_difficulty is None:
+                abort(422)
+            if new_category is None:
+                abort(422)
+
+            question = Question(question=new_question, answer=new_answer, difficulty=new_difficulty, category_id=new_category)
+            question.insert()
+
+            return jsonify({
+                'status_code': 200,
+                'success': True,
+                'created': question.id,
+                })
+
+        except:
+            abort(422)
 
     '''
     @TODO:
