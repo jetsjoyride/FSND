@@ -92,8 +92,8 @@ The API will return three error types when requests fail:
 ### GET '/categories'
 
 General: Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-Request Arguments: Include a request argument to choose page number, starting from 1.
-Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. Results are paginated in groups of 10.
+Request Arguments: None
+Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs.
 
 Sample Command: curl -X "GET" http://127.0.0.1:5000/categories
 
