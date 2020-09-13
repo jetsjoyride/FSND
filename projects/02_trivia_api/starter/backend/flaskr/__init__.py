@@ -123,6 +123,25 @@ def create_app(test_config=None):
     This removal will persist in the database and when you refresh the page.
     '''
 
+    @app.route('/questions/<int:question_id>', methods=['DELETE'])
+    @cross_origin()  ## Enables CORS on this specific endpoint
+    def delete_question(question_id):
+        try:
+            status = 200
+            question = Question.query.filter(Question.id==question_id).one_or_none()
+
+            question.delete()
+
+            return jsonify({
+                'status_code': 200,
+                'success': True,
+                'deleted': question_id,
+                })
+
+        except:
+            abort(422)
+
+
     '''
     @TODO:
     Create an endpoint to POST a new question,

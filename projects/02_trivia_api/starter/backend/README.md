@@ -95,7 +95,7 @@ General: Fetches a dictionary of categories in which the keys are the ids and th
 Request Arguments: Include a request argument to choose page number, starting from 1.
 Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. Results are paginated in groups of 10.
 
-Sample Command: curl http://127.0.0.1:5000/categories
+Sample Command: curl -X "GET" http://127.0.0.1:5000/categories
 
 Sample Response:
 >{ "categories": [\
@@ -116,17 +116,17 @@ General: Fetches a dictionary of questions for a specific category.
 Request Arguments: Valid category ID. Include a request argument to choose page number, starting from 1.\
 Returns: Results are paginated in groups of 10.\
 
-Sample Command: curl http://127.0.0.1:5000/categories/4/questions
+Sample Command: curl -X "GET" http://127.0.0.1:5000/categories/4/questions
 
 Sample Response: same as GET '/questions' below
 
-  ### GET '/questions'
+### GET '/questions'
 
   General: Fetches a dictionary of questions in which the keys are the ids and it contains information about the question, it's difficulty and category as well as a tuple of category id and type.\
   Request Arguments: Include a request argument to choose page number, starting from 1.\
   Returns: Results are paginated in groups of 10.\
 
-  Sample Command: curl http://127.0.0.1:5000/questions
+  Sample Command: curl -X "GET" http://127.0.0.1:5000/questions
 
   Sample Response:
   >  { "categories": [\
@@ -166,6 +166,19 @@ Sample Response: same as GET '/questions' below
     "total_questions": 19\
     }
 
+### DELETE '/questions/\<question_id\>'
+
+General: Delete a specific question\
+Request Arguments: Valid question ID.\
+Returns: Confirmation response with deleted ID if successful
+
+Sample Command: curl -X "DELETE" http://127.0.0.1:5000/questions/23
+
+Sample Response:
+>({ 'status_code': 200,\
+   'success': True,\
+   'deleted': 23,\
+})
 
 
 ## Testing
