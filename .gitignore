@@ -11,3 +11,5 @@ venv
 .Trashes
 ehthumbs.db
 Thumbs.db
+FlaskRecap/*
+projects/02_trivia_api/*
