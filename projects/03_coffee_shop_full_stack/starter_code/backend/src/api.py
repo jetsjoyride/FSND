@@ -87,12 +87,12 @@ def post_drinks(payload):
     # get body
     body = request.get_json()
 
-    new_title = body.get('title', None)
-    # new_recipe = body.get('recipe', None)
-    # Needs to be string with names in double quotes
-    new_recipe = json.dumps(body['recipe'])
 
     try:
+        new_title = body.get('title', None)
+        # Needs to be string with names in double quotes
+        new_recipe = json.dumps(body['recipe'])
+
         # Verify all the input is provided
         if new_title is None:
             abort(422)
@@ -110,7 +110,6 @@ def post_drinks(payload):
 
     except:
         abort(422)
-        return 'Failed'
 
 '''
 @TODO implement endpoint
@@ -132,25 +131,20 @@ def post_drinks(payload):
 def patch_drinks(payload, drink_id):
     body = request.get_json()
 
-    new_title = body.get('title', None)
-    # new_recipe = body.get('recipe', None)
-    # Needs to be string with names in double quotes
-    new_recipe = json.dumps(body['recipe'])
-
     try:
-        # Verify all the input is provided
-        if new_title is None:
-            abort(422)
-        if new_recipe is None:
-            abort(422)
-
+        # if invalid number abort 404
         try:
             drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
         except:
             abort(404)
 
-        drink.title = new_title
-        drink.recipe = new_recipe
+        # Patch whichever keys are provided
+        if "title" in body:
+            drink.title = body.get('title', None)
+
+        if "recipe" in body:
+            drink.recipe = json.dumps(body['recipe'])
+
         drink.insert()
 
         return jsonify({
