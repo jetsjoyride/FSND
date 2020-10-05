@@ -87,7 +87,6 @@ def post_drinks(payload):
     # get body
     body = request.get_json()
 
-
     try:
         new_title = body.get('title', None)
         # Needs to be string with names in double quotes
