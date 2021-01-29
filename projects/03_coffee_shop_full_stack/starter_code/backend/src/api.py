@@ -35,7 +35,7 @@ DONE!! - @TODO implement endpoint
 def get_drinks(payload):
     try:
         drinks = Drink.query.all()
-    except:
+    except DatabaseError:
         abort(422)
     return jsonify({
         'status_code': 200,
@@ -60,13 +60,14 @@ DONE!! - @TODO implement endpoint
 def get_drinks_detail(payload):
     try:
         drinks = Drink.query.all()
-    except:
+    except DatabaseError:
         abort(422)
     return jsonify({
         'status_code': 200,
         'success': True,
         'drinks': [drink.long() for drink in drinks]
         })
+
 
 '''
 DONE!! - @TODO implement endpoint
@@ -107,8 +108,9 @@ def post_drinks(payload):
             'drinks': [drink.long()]
             })
 
-    except:
+    except DatabaseError:
         abort(422)
+
 
 '''
 @TODO implement endpoint
@@ -134,7 +136,7 @@ def patch_drinks(payload, drink_id):
         # if invalid number abort 404
         try:
             drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
-        except:
+        except InvalidDrinkID:
             abort(404)
 
         # Patch whichever keys are provided
@@ -152,7 +154,7 @@ def patch_drinks(payload, drink_id):
             'drinks': [drink.long()]
             })
 
-    except:
+    except DatabaseError:
         abort(422)
         return 'Failed'
 
@@ -173,24 +175,25 @@ def patch_drinks(payload, drink_id):
 @app.route('/drinks/<int:drink_id>', methods=['DELETE'])
 @requires_auth('delete:drinks')
 def delete_drinks(payload, drink_id):
+    try:
+        status = 200
+
         try:
-            status = 200
+            drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
+        except InvalidDrinkID:
+            abort(404)
 
-            try:
-                drink = Drink.query.filter(Drink.id == drink_id).one_or_none()
-            except:
-                abort(404)
+        drink.delete()
 
-            drink.delete()
+    except DatabaseError:
+        abort(422)
 
-        except:
-            abort(422)
+    return jsonify({
+        'status_code': 200,
+        'success': True,
+        'delete': drink_id,
+        })
 
-        return jsonify({
-            'status_code': 200,
-            'success': True,
-            'delete': drink_id,
-            })
 
 # Error Handling
 '''
@@ -205,6 +208,7 @@ def unprocessable(error):
                     "error": 422,
                     "message": "unprocessable"
                     }), 422
+
 
 '''
 @TODO implement error handlers using the @app.errorhandler(error) decorator
@@ -249,6 +253,7 @@ def forbidden(error):
                     "error": 403,
                     "message": "forbidden"
                     }), 403
+
 
 '''
 @TODO implement error handler for AuthError

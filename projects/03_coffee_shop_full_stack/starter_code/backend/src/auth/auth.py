@@ -7,7 +7,7 @@ from urllib.request import urlopen
 # updated for Jason's Auth0 info
 AUTH0_DOMAIN = 'fsnd-jps.us.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE =  'coffee' # 'http://localhost:5000'
+API_AUDIENCE = 'coffee'  # 'http://localhost:5000'
 
 # AuthError Exception
 '''
@@ -62,6 +62,7 @@ def get_token_auth_header():
     token = parts[1]
     return token
 
+
 '''
 @TODO implement check_permissions(permission, payload) method
     @INPUTS
@@ -78,16 +79,17 @@ def get_token_auth_header():
 
 def check_permissions(permission, payload):
     if 'permissions' not in payload:
-                        raise AuthError({
-                            'code': 'invalid_claims',
-                            'description': 'Permissions not included in JWT.'
-                        }, 400)
+        raise AuthError({
+            'code': 'invalid_claims',
+            'description': 'Permissions not included in JWT.'
+        }, 400)
     if permission not in payload['permissions']:
         raise AuthError({
             'code': 'unauthorized',
             'description': 'Permission not found.'
         }, 403)
     return True
+
 
 '''
 @DONE - TODO implement verify_decode_jwt(token) method
@@ -156,6 +158,7 @@ def verify_decode_jwt(token):
                 'description': 'Unable to find the appropriate key.'
             }, 400)
 
+
 '''
 @DONE - TODO implement @requires_auth(permission) decorator method
     @INPUTS
@@ -177,7 +180,7 @@ def requires_auth(permission=''):
             token = get_token_auth_header()
             try:
                 payload = verify_decode_jwt(token)
-            except:
+            except InvalidToken:
                 abort(401)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
